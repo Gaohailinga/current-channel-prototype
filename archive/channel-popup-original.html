@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>签约我司后预估数据</title>
+  <link rel="stylesheet" href="css/style-original.css" />
+</head>
+<body>
+  <div class="bg-decorations">
+    <div class="cube"></div>
+    <div class="light-beam"></div>
+    <div class="stars"></div>
+  </div>
+
+  <main class="container">
+    <section class="card page" id="page-form">
+      <div class="company-name">辽宁宇星信息科技有限公司</div>
+      <h1 class="card-title">签约我司后预估数据</h1>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required" for="dailyTransactionCount">预计日交易笔数（万笔）</label>
+          <input class="form-input" type="text" id="dailyTransactionCount" placeholder="请输入预计日交易笔数" value="0.1" />
+        </div>
+        <div class="form-group">
+          <label class="form-label required" for="estimatedScaleTime">完成预估规模时间</label>
+          <input class="form-input" type="text" id="estimatedScaleTime" placeholder="请输入完成预估规模时间" value="6个月" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required" for="businessModel">展业模式</label>
+          <select class="form-select" id="businessModel">
+            <option value="直营" selected>直营</option>
+            <option value="代理">代理</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label required" for="currentChannel">当前渠道</label>
+          <select class="form-select" id="currentChannel">
+            <option value="">请选择当前渠道</option>
+            <option value="乐刷">乐刷</option>
+            <option value="富友">富友</option>
+            <option value="好哒">好哒</option>
+            <option value="随行付">随行付</option>
+            <option value="拉卡拉">拉卡拉</option>
+            <option value="易宝">易宝</option>
+            <option value="汇付">汇付</option>
+            <option value="国通">国通</option>
+            <option value="汇来米">汇来米</option>
+            <option value="收钱吧">收钱吧</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group hidden" id="otherChannelGroup">
+        <label class="form-label required" for="currentChannelOther">当前渠道名称</label>
+        <input class="form-input" type="text" id="currentChannelOther" placeholder="请输入当前渠道名称" maxlength="20" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required" for="businessSceneMode">业务场景模式</label>
+          <select class="form-select" id="businessSceneMode">
+            <option value="线下" selected>线下</option>
+            <option value="线上">线上</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="companyWebsite">公司网址</label>
+          <input class="form-input" type="text" id="companyWebsite" placeholder="请填写公司网址" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="productDownloadLink">产品下载链接或名称</label>
+        <input class="form-input" type="text" id="productDownloadLink" placeholder="请填写产品下载链接或名称" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required" for="companyScale">公司规模（人数）</label>
+          <input class="form-input" type="text" id="companyScale" placeholder="请输入公司规模人数" value="5" />
+        </div>
+        <div class="form-group">
+          <label class="form-label required" for="taxCreditLevel">财务纳税信用等级（C/D级不合作）</label>
+          <select class="form-select" id="taxCreditLevel">
+            <option value="A">A</option>
+            <option value="B" selected>B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required" for="taxCreditScreenshot">财务纳税信用等级截图</label>
+        <input class="form-input" type="text" id="taxCreditScreenshot" placeholder="请上传或填写截图信息" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required" for="contactName">联系人姓名</label>
+        <input class="form-input" type="text" id="contactName" placeholder="请输入联系人姓名" value="王耀宇" />
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-default" id="btn-cancel" type="button">取消</button>
+        <button class="btn btn-primary" id="btn-confirm" type="button">确认</button>
+      </div>
+    </section>
+
+    <section class="card page hidden" id="page-success">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">提交成功</h2>
+      <p class="success-desc">签约预估数据已保存</p>
+      <div class="btn-group btn-group-single">
+        <button class="btn btn-primary" id="success-done" type="button">知道了</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="js/app-original.js"></script>
+</body>
+</html>
