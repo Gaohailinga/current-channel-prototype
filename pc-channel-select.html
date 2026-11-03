@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PC 入网 - 当前渠道下拉选择</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #f0f2f5;
+    color: #262626;
+    padding: 40px 20px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 4px 16px rgba(0,0,0,.06);
+    padding: 28px 32px 32px;
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .card-sub { font-size: 13px; color: #8c8c8c; margin: 12px 0 24px; }
+  .form-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 22px;
+  }
+  .form-label {
+    width: 110px;
+    flex: 0 0 110px;
+    text-align: right;
+    padding-right: 12px;
+    font-size: 14px;
+    line-height: 40px;
+    color: #262626;
+  }
+  .form-label .req { color: #ff4d4f; margin-right: 4px; }
+  .form-ctrl { flex: 1; max-width: 420px; }
+
+  /* ---------- 下拉选择器 ---------- */
+  .select { position: relative; }
+  .select-trigger {
+    height: 40px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s;
+    user-select: none;
+  }
+  .select-trigger:hover { border-color: #4096ff; }
+  .select.open .select-trigger {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(22,119,255,.12);
+  }
+  .select-value { color: #262626; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .select-value.placeholder { color: #bfbfbf; }
+  .select-arrow {
+    width: 0; height: 0;
+    margin-left: 8px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #bfbfbf;
+    transition: transform .2s;
+    flex: 0 0 auto;
+  }
+  .select.open .select-arrow { transform: rotate(180deg); border-top-color: #1677ff; }
+
+  .select-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12), 0 3px 6px rgba(0,0,0,.08);
+    padding: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+    z-index: 20;
+  }
+  .select.open .select-panel { display: block; }
+  .select-option {
+    height: 34px;
+    line-height: 34px;
+    padding: 0 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #262626;
+  }
+  .select-option:hover, .select-option.active { background: #f5f5f5; }
+  .select-option.selected { background: #e6f4ff; color: #1677ff; font-weight: 500; }
+  .select-option .tick { color: #1677ff; font-size: 13px; opacity: 0; }
+  .select-option.selected .tick { opacity: 1; }
+
+  /* 其他 输入框 */
+  .other-box { margin-top: 10px; display: none; }
+  .other-box.show { display: block; }
+  .other-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    padding: 0 12px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .other-input:focus {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(22,119,255,.12);
+  }
+  .other-input.error { border-color: #ff4d4f; }
+  .err-msg {
+    display: none;
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .err-msg.show { display: block; }
+
+  .footer { margin-top: 32px; padding-left: 110px; display: flex; gap: 12px; }
+  .btn {
+    height: 40px;
+    padding: 0 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .2s;
+  }
+  .btn-primary { background: #1677ff; color: #fff; }
+  .btn-primary:hover { background: #4096ff; }
+  .btn-default { background: #fff; color: #262626; border-color: #d9d9d9; }
+  .btn-default:hover { border-color: #4096ff; color: #1677ff; }
+
+  .result {
+    margin-top: 20px;
+    margin-left: 110px;
+    font-size: 13px;
+    color: #52c41a;
+    min-height: 20px;
+  }
+
+  .hint {
+    max-width: 760px;
+    margin: 0 auto 16px;
+    font-size: 13px;
+    color: #8c8c8c;
+    line-height: 1.8;
+  }
+  .hint b { color: #1677ff; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="hint">
+  <b>改造点：</b>「当前渠道」由文本输入改为下拉选择；占位文案由「请填写」改为「请选择」；选择「其他」时可补充输入渠道名称。
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <h1 class="card-title">入网信息</h1>
+    <p class="card-sub">请完善以下商户入网信息</p>
+
+    <div class="form-row">
+      <div class="form-label"><span class="req">*</span>当前渠道</div>
+      <div class="form-ctrl">
+        <div class="select" id="select">
+          <div class="select-trigger" id="trigger" tabindex="0">
+            <span class="select-value placeholder" id="value">请选择</span>
+            <i class="select-arrow"></i>
+          </div>
+          <div class="select-panel" id="panel"></div>
+        </div>
+
+        <div class="other-box" id="otherBox">
+          <input class="other-input" id="otherInput" type="text" placeholder="请输入当前渠道名称" maxlength="50" />
+        </div>
+        <div class="err-msg" id="errMsg">请选择当前渠道</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn btn-primary" id="btnSubmit" type="button">提交</button>
+      <button class="btn btn-default" id="btnReset" type="button">重置</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var OPTIONS = [
+    "乐刷", "富友", "好哒", "随行付", "拉卡拉", "易宝",
+    "汇付", "国通", "汇来米", "收钱吧", "其他"
+  ];
+
+  var select = document.getElementById("select");
+  var trigger = document.getElementById("trigger");
+  var panel = document.getElementById("panel");
+  var valueEl = document.getElementById("value");
+  var otherBox = document.getElementById("otherBox");
+  var otherInput = document.getElementById("otherInput");
+  var errMsg = document.getElementById("errMsg");
+  var result = document.getElementById("result");
+
+  var selected = "";
+  var activeIndex = -1;
+
+  function renderPanel() {
+    panel.innerHTML = "";
+    OPTIONS.forEach(function (opt, i) {
+      var div = document.createElement("div");
+      div.className = "select-option" + (opt === selected ? " selected" : "") + (i === activeIndex ? " active" : "");
+      div.innerHTML = "<span>" + opt + "</span><span class='tick'>✓</span>";
+      div.addEventListener("mousedown", function (e) {
+        e.preventDefault();
+        choose(opt);
+      });
+      panel.appendChild(div);
+    });
+  }
+
+  function choose(opt) {
+    selected = opt;
+    valueEl.textContent = opt;
+    valueEl.classList.remove("placeholder");
+    close();
+    renderPanel();
+    if (opt === "其他") {
+      otherBox.classList.add("show");
+      otherInput.focus();
+    } else {
+      otherBox.classList.remove("show");
+      otherInput.value = "";
+      otherInput.classList.remove("error");
+    }
+    errMsg.classList.remove("show");
+  }
+
+  function open() {
+    select.classList.add("open");
+    activeIndex = OPTIONS.indexOf(selected);
+    renderPanel();
+  }
+  function close() {
+    select.classList.remove("open");
+    activeIndex = -1;
+  }
+
+  trigger.addEventListener("click", function () {
+    select.classList.contains("open") ? close() : open();
+  });
+
+  trigger.addEventListener("keydown", function (e) {
+    var isOpen = select.classList.contains("open");
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      isOpen ? (activeIndex >= 0 && choose(OPTIONS[activeIndex])) : open();
+    } else if (e.key === "Escape") {
+      close();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!isOpen) { open(); return; }
+      activeIndex = Math.min(activeIndex + 1, OPTIONS.length - 1);
+      renderPanel();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!isOpen) return;
+      activeIndex = Math.max(activeIndex - 1, 0);
+      renderPanel();
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!select.contains(e.target)) close();
+  });
+
+  otherInput.addEventListener("input", function () {
+    otherInput.classList.remove("error");
+    errMsg.classList.remove("show");
+  });
+
+  document.getElementById("btnSubmit").addEventListener("click", function () {
+    result.textContent = "";
+    if (!selected) {
+      errMsg.textContent = "请选择当前渠道";
+      errMsg.classList.add("show");
+      trigger.focus();
+      return;
+    }
+    if (selected === "其他" && !otherInput.value.trim()) {
+      errMsg.textContent = "请输入当前渠道名称";
+      errMsg.classList.add("show");
+      otherInput.classList.add("error");
+      otherInput.focus();
+      return;
+    }
+    var finalVal = selected === "其他" ? otherInput.value.trim() : selected;
+    result.textContent = "提交成功，当前渠道：" + finalVal;
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function () {
+    selected = "";
+    valueEl.textContent = "请选择";
+    valueEl.classList.add("placeholder");
+    otherBox.classList.remove("show");
+    otherInput.value = "";
+    otherInput.classList.remove("error");
+    errMsg.classList.remove("show");
+    result.textContent = "";
+    close();
+  });
+
+  renderPanel();
+})();
+</script>
+</body>
+</html>
