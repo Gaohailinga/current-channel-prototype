@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>当前渠道审核</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: #f5f5f5;
+      position: relative;
+      margin: 0 auto;
+    }
+
+    /* ========== 顶部导航 ========== */
+    .navbar {
+      height: 88px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0 16px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 0.5px solid #e8e8e8;
+    }
+    .navbar .nav-back {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      font-size: 22px;
+      color: #333;
+      cursor: pointer;
+      width: 40px;
+      text-align: left;
+    }
+    .navbar .nav-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* ========== 审核只读行 ========== */
+    .review-section {
+      background: #fff;
+      margin-bottom: 8px;
+    }
+    .review-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      padding: 14px 16px 8px;
+    }
+    .review-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid #f0f0f0;
+      min-height: 48px;
+    }
+    .review-row:last-child { border-bottom: none; }
+    .review-row .row-label {
+      flex: 1;
+      font-size: 15px;
+      color: #333;
+    }
+    .review-row .row-value {
+      font-size: 15px;
+      color: #333;
+      text-align: right;
+      max-width: 55%;
+      word-break: break-all;
+    }
+
+    /* ========== 渠道平铺展开区域 ========== */
+    .channel-expanded {
+      background: #fff;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+    }
+    .channel-expanded .review-row {
+      padding-bottom: 8px;
+    }
+    .channel-expanded .channel-list {
+      padding: 0 16px 12px;
+    }
+    .channel-expanded .channel-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 0.5px solid #f5f5f5;
+      font-size: 15px;
+      color: #333;
+    }
+    .channel-expanded .channel-item:last-child {
+      border-bottom: none;
+    }
+    .channel-expanded .channel-item .channel-index {
+      width: 24px;
+      color: #999;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .channel-expanded .channel-item .channel-name {
+      flex: 1;
+    }
+
+    /* ========== 底部结算信息 ========== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px 8px;
+    }
+    .section-header .header-bar {
+      width: 3px;
+      height: 14px;
+      background: #4A9B8E;
+      border-radius: 2px;
+      margin-right: 8px;
+    }
+    .section-header .header-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <nav class="navbar">
+    <div class="nav-back">‹</div>
+    <div class="nav-title">曹县億柯凯瑞箱包店 dl10a1</div>
+  </nav>
+
+  <!-- 拓展商户行业 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">拓展商户行业</div>
+      <div class="row-value">8888</div>
+    </div>
+  </div>
+
+  <!-- 贵司存量数据 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">日笔数 (万笔)</div>
+      <div class="row-value">3</div>
+    </div>
+    <div class="review-row">
+      <div class="row-label">日交易金额 (万元)</div>
+      <div class="row-value">6</div>
+    </div>
+  </div>
+
+  <!-- 签约我司后预估数据 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">预计日交易笔数 (万笔)</div>
+      <div class="row-value">1111</div>
+    </div>
+    <div class="review-row">
+      <div class="row-label">完成预估规模时间</div>
+      <div class="row-value">111</div>
+    </div>
+  </div>
+
+  <!-- 展业模式 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">展业模式</div>
+      <div class="row-value">直营</div>
+    </div>
+  </div>
+
+  <!-- 当前渠道（平铺展开） -->
+  <div class="channel-expanded">
+    <div class="review-row">
+      <div class="row-label">当前渠道</div>
+      <div class="row-value">乐刷、富友、收钱吧</div>
+    </div>
+    <div class="channel-list">
+      <div class="channel-item">
+        <span class="channel-index">1.</span>
+        <span class="channel-name">乐刷</span>
+      </div>
+      <div class="channel-item">
+        <span class="channel-index">2.</span>
+        <span class="channel-name">富友</span>
+      </div>
+      <div class="channel-item">
+        <span class="channel-index">3.</span>
+        <span class="channel-name">收钱吧</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 业务场景模式 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">业务场景模式</div>
+      <div class="row-value">线下</div>
+    </div>
+  </div>
+
+  <!-- 公司规模 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">公司规模 (人数)</div>
+      <div class="row-value">999</div>
+    </div>
+  </div>
+
+  <!-- 财务纳税信用等级 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">财务纳税信用等级</div>
+      <div class="row-value">A</div>
+    </div>
+  </div>
+
+  <!-- 产品及业务介绍 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">产品及业务介绍</div>
+      <div class="row-value">多大的</div>
+    </div>
+  </div>
+
+  <!-- 财务纳税信用等级清算协会备案截图 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">财务纳税信用等级清算协会备案截图</div>
+      <div class="row-value"></div>
+    </div>
+  </div>
+
+  <!-- 底部占位 -->
+  <div style="height: 16px;"></div>
+
+  <!-- 结算信息 -->
+  <div class="review-section" style="margin-bottom: 0; padding-bottom: 60px;">
+    <div class="section-header">
+      <div class="header-bar"></div>
+      <div class="header-text">结算信息</div>
+    </div>
+    <div class="review-row">
+      <div class="row-label">结算方式</div>
+      <div class="row-value">T+1</div>
+    </div>
+    <div class="review-row">
+      <div class="row-label">结算银行卡号</div>
+      <div class="row-value">6222 **** **** 1234</div>
+    </div>
+    <div class="review-row">
+      <div class="row-label">开户行</div>
+      <div class="row-value">中国工商银行</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
