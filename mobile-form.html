@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>机构入网申请</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: #f5f5f5;
+      position: relative;
+    }
+
+    /* ========== 顶部导航 ========== */
+    .navbar {
+      height: 88px;
+      background: #fff;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0 16px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 0.5px solid #e8e8e8;
+    }
+    .navbar .nav-back {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      font-size: 22px;
+      color: #333;
+      cursor: pointer;
+      width: 40px;
+      text-align: left;
+    }
+    .navbar .nav-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    /* ========== 图片上传区 ========== */
+    .upload-section {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #fff;
+      margin-bottom: 8px;
+    }
+    .upload-thumb {
+      width: 100px;
+      height: 80px;
+      background: #e8e8e8;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #999;
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-thumb.has-img {
+      background: #d4d4d4;
+    }
+    .upload-thumb .thumb-text {
+      text-align: center;
+      line-height: 1.4;
+    }
+    .upload-thumb .thumb-close {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 18px;
+      height: 18px;
+      background: rgba(0,0,0,.5);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .upload-add {
+      width: 100px;
+      height: 80px;
+      background: #f5f5f5;
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: #bbb;
+      cursor: pointer;
+    }
+
+    /* ========== 表单区域 ========== */
+    .form-section {
+      background: #fff;
+      margin-bottom: 8px;
+    }
+    .form-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      padding: 14px 16px 8px;
+    }
+    .form-row {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid #f0f0f0;
+      cursor: pointer;
+      min-height: 48px;
+    }
+    .form-row:active { background: #f5f5f5; }
+    .form-row:last-child { border-bottom: none; }
+    .form-row .row-label {
+      flex: 1;
+      font-size: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+    .form-row .row-label .req {
+      color: #ff4d4f;
+      margin-right: 2px;
+    }
+    .form-row .row-value {
+      font-size: 15px;
+      color: #333;
+      text-align: right;
+      max-width: 50%;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .form-row .row-value.placeholder {
+      color: #bbb;
+    }
+    .form-row .row-value .arrow {
+      color: #ccc;
+      font-size: 14px;
+      margin-left: 4px;
+    }
+    .form-row .row-value .channel-tag {
+      display: inline-block;
+      background: #e6f7ff;
+      color: #1890ff;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 13px;
+      margin-left: 4px;
+      white-space: nowrap;
+    }
+
+    /* 输入框 */
+    .form-row .row-input {
+      flex: 1;
+      text-align: right;
+    }
+    .form-row .row-input input {
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #333;
+      text-align: right;
+      background: transparent;
+      width: 100%;
+      max-width: 160px;
+    }
+    .form-row .row-input input::placeholder {
+      color: #bbb;
+    }
+
+    /* ========== 渠道标签区域 ========== */
+    .channel-tags-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 16px 12px;
+      background: #fff;
+    }
+    .channel-tag-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #e6f7ff;
+      color: #1890ff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .channel-tag-item .tag-remove {
+      cursor: pointer;
+      font-size: 14px;
+      opacity: .7;
+      margin-left: 2px;
+    }
+
+    /* ========== 底部提交按钮 ========== */
+    .footer-btn {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 440px;
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      background: #fff;
+      border-top: 0.5px solid #e8e8e8;
+      z-index: 10;
+    }
+    .submit-btn {
+      width: 100%;
+      height: 44px;
+      background: #4A9B8E;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .submit-btn:active { background: #3d8276; }
+
+    /* ========== Toast ========== */
+    .toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,.75);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ========== 页面切换 ========== */
+    .page { display: none; width: 100%; }
+    .page.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== 主表单页 ==================== -->
+<div class="page active" id="page-form">
+  <div class="phone-frame">
+    <nav class="navbar">
+      <div class="nav-back">‹</div>
+      <div class="nav-title">曹县億柯凯瑞箱包店票1</div>
+    </nav>
+
+    <!-- 图片上传 -->
+    <div class="upload-section">
+      <div class="upload-thumb has-img">
+        <div class="thumb-close" onclick="this.parentElement.classList.remove('has-img');this.parentElement.querySelector('.thumb-text').style.display='block'">×</div>
+        <div class="thumb-text" style="display:none">营业执照<br>2025.05.01-2026.05.01</div>
+      </div>
+      <div class="upload-thumb has-img">
+        <div class="thumb-close" onclick="this.parentElement.classList.remove('has-img');this.parentElement.querySelector('.thumb-text').style.display='block'">×</div>
+        <div class="thumb-text" style="display:none">营业执照<br>2025.05.01-2026.05.01</div>
+      </div>
+      <div class="upload-add">+</div>
+    </div>
+
+    <!-- 贵司存量数据 -->
+    <div class="form-section">
+      <div class="form-section-title">贵司存量数据</div>
+      <div class="form-row">
+        <div class="row-label"><span class="req">*</span>拓展商户行业</div>
+        <div class="row-input"><input type="text" value="111" /></div>
+      </div>
+      <div class="form-row">
+        <div class="row-label"><span class="req">*</span>日笔数 (万笔)</div>
+        <div class="row-input"><input type="text" value="1" /></div>
+      </div>
+      <div class="form-row">
+        <div class="row-label"><span class="req">*</span>日交易金额 (万元)</div>
+        <div class="row-input"><input type="text" value="1" /></div>
+      </div>
+    </div>
+
+    <!-- 签约我司后预估数据 -->
+    <div class="form-section">
+      <div class="form-section-title">签约我司后预估数据</div>
+      <div class="form-row">
+        <div class="row-label"><span class="req">*</span>预计日交易笔数 (万笔)</div>
+        <div class="row-input"><input type="text" value="1" /></div>
+      </div>
+      <div class="form-row">
+        <div class="row-label"><span class="req">*</span>完成预估规模时间</div>
+        <div class="row-input"><input type="text" value="111" /></div>
+      </div>
+    </div>
+
+    <!-- 展业模式 -->
+    <div class="form-section">
+      <div class="form-row" onclick="showToast('请选择展业模式')">
+        <div class="row-label"><span class="req">*</span>展业模式</div>
+        <div class="row-value">直营 <span class="arrow">›</span></div>
+      </div>
+    </div>
+
+    <!-- 当前渠道（多选入口） -->
+    <div class="form-section" style="padding-bottom: 4px;">
+      <div class="form-row" id="channel-entry" onclick="openChannelPage()">
+        <div class="row-label"><span class="req">*</span>当前渠道</div>
+        <div class="row-value" id="channel-summary">
+          <span class="placeholder">请选择</span>
+          <span class="arrow">›</span>
+        </div>
+      </div>
+      <!-- 已选渠道标签 -->
+      <div class="channel-tags-wrap" id="channel-tags"></div>
+    </div>
+
+    <!-- 业务场景模式 -->
+    <div class="form-section">
+      <div class="form-row" onclick="showToast('请选择业务场景模式')">
+        <div class="row-label"><span class="req">*</span>业务场景模式</div>
+        <div class="row-value">线下 <span class="arrow">›</span></div>
+      </div>
+    </div>
+
+    <!-- 其他字段 -->
+    <div class="form-section">
+      <div class="form-row">
+        <div class="row-label">公司网址</div>
+        <div class="row-input"><input type="text" placeholder="请填写公司网址" /></div>
+      </div>
+      <div class="form-row">
+        <div class="row-label">产品下载链接或名称</div>
+        <div class="row-input"><input type="text" placeholder="产品下载链接或名称" /></div>
+      </div>
+      <div class="form-row">
+        <div class="row-label"><span class="req">*</span>公司规模 (人数)</div>
+        <div class="row-input"><input type="text" value="11" /></div>
+      </div>
+      <div class="form-row" onclick="showToast('请选择财务纳税信用等级')">
+        <div class="row-label"><span class="req">*</span>财务纳税信用等级 (C/D级不合作)</div>
+        <div class="row-value">A <span class="arrow">›</span></div>
+      </div>
+    </div>
+
+    <!-- 底部占位 -->
+    <div style="height: 80px;"></div>
+
+    <!-- 提交按钮 -->
+    <div class="footer-btn">
+      <button class="submit-btn" onclick="submitForm()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 当前渠道选择页 ==================== -->
+<div class="page" id="page-channel">
+  <div class="phone-frame">
+    <nav class="navbar" style="background:#4A9B8E;">
+      <div class="nav-back" style="color:#fff;" onclick="closeChannelPage()">‹</div>
+      <div class="nav-title" style="color:#fff;">当前渠道</div>
+      <div class="nav-done" style="color:#fff;" onclick="confirmChannel()">完成</div>
+    </nav>
+    <div id="option-list" style="background:#fff; min-height: calc(100vh - 88px);"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== 渠道选项 ==========
+const CHANNELS = [
+  { value: "leshan", label: "乐刷" },
+  { value: "fuyou", label: "富友" },
+  { value: "haoda", label: "好哒" },
+  { value: "lakala", label: "拉卡拉" },
+  { value: "yibao", label: "易宝" },
+  { value: "huifu", label: "汇付" },
+  { value: "guotong", label: "国通" },
+  { value: "huilaimi", label: "汇来米" },
+  { value: "shouqianba", label: "收钱吧" },
+  { value: "other", label: "其他" }
+];
+
+// 表单上已选的渠道（从主表单带入）
+let formSelected = [];
+let formOtherText = "";
+
+// 选择页临时状态
+let tempSelected = [];
+let tempOtherText = "";
+
+function $(id) { return document.getElementById(id); }
+
+function showToast(msg, dur = 2000) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), dur);
+}
+
+// ========== 页面切换 ==========
+function openChannelPage() {
+  tempSelected = [...formSelected];
+  tempOtherText = formOtherText;
+  $("page-form").classList.remove("active");
+  $("page-channel").classList.add("active");
+  renderChannelOptions();
+}
+
+function closeChannelPage() {
+  $("page-channel").classList.remove("active");
+  $("page-form").classList.add("active");
+}
+
+function confirmChannel() {
+  if (tempSelected.length === 0) {
+    showToast("请选择当前渠道");
+    return;
+  }
+  if (tempSelected.includes("other") && !tempOtherText.trim()) {
+    showToast("请输入其他渠道名称");
+    const inp = document.querySelector(".panel-other-input");
+    if (inp) inp.focus();
+    return;
+  }
+  formOtherText = tempOtherText;
+  formSelected = [...tempSelected];
+  closeChannelPage();
+  renderFormChannels();
+}
+
+// ========== 渲染表单上的已选渠道 ==========
+function renderFormChannels() {
+  const summary = $("channel-summary");
+  const tagsWrap = $("channel-tags");
+
+  if (formSelected.length === 0) {
+    summary.innerHTML = '<span class="placeholder">请选择</span><span class="arrow">›</span>';
+    tagsWrap.innerHTML = "";
+    return;
+  }
+
+  // 摘要行：显示 "已选 N 项"
+  summary.innerHTML = '<span>已选 ' + formSelected.length + ' 项</span><span class="arrow">›</span>';
+
+  // 标签区域
+  tagsWrap.innerHTML = "";
+  formSelected.forEach(v => {
+    let label;
+    if (v === "other") {
+      label = formOtherText || "其他";
+    } else {
+      const opt = CHANNELS.find(o => o.value === v);
+      label = opt ? opt.label : v;
+    }
+    const tag = document.createElement("span");
+    tag.className = "channel-tag-item";
+    tag.innerHTML = label + '<span class="tag-remove" data-value="' + v + '">×</span>';
+    tag.querySelector(".tag-remove").addEventListener("click", (e) => {
+      e.stopPropagation();
+      removeFormChannel(v);
+    });
+    tagsWrap.appendChild(tag);
+  });
+}
+
+function removeFormChannel(v) {
+  const idx = formSelected.indexOf(v);
+  if (idx !== -1) formSelected.splice(idx, 1);
+  if (v === "other") formOtherText = "";
+  renderFormChannels();
+}
+
+// ========== 选择页渲染 ==========
+function renderChannelOptions() {
+  const list = $("option-list");
+  list.innerHTML = "";
+  const isOtherSel = tempSelected.includes("other");
+
+  CHANNELS.forEach(opt => {
+    const isSelected = tempSelected.includes(opt.value);
+    const item = document.createElement("div");
+    item.className = "option-item" + (isSelected ? " selected" : "");
+    item.dataset.value = opt.value;
+
+    if (opt.value === "other" && isOtherSel) {
+      // "其他"选中：选项行内右侧嵌入输入框
+      item.classList.add("other-with-input");
+      item.innerHTML =
+        '<span class="option-text">其他</span>' +
+        '<input class="panel-other-input" type="text" placeholder="请输入渠道名称" maxlength="50" />' +
+        '<span class="option-check checked"></span>';
+      const inp = item.querySelector(".panel-other-input");
+      inp.value = tempOtherText;
+      inp.addEventListener("input", function() {
+        tempOtherText = this.value;
+      });
+      inp.addEventListener("mousedown", function(e) { e.stopPropagation(); });
+      inp.addEventListener("click", function(e) { e.stopPropagation(); });
+      item.addEventListener("click", (e) => {
+        if (e.target === inp) return;
+        toggleChannel("other");
+      });
+      list.appendChild(item);
+      setTimeout(() => inp.focus(), 50);
+    } else {
+      item.innerHTML =
+        '<span class="option-text">' + opt.label + '</span>' +
+        '<span class="option-check' + (isSelected ? ' checked' : '') + '"></span>';
+      item.addEventListener("click", () => toggleChannel(opt.value));
+      list.appendChild(item);
+    }
+  });
+}
+
+function toggleChannel(value) {
+  const idx = tempSelected.indexOf(value);
+  if (idx !== -1) {
+    tempSelected.splice(idx, 1);
+    if (value === "other") tempOtherText = "";
+  } else {
+    tempSelected.push(value);
+  }
+  renderChannelOptions();
+}
+
+// ========== 提交 ==========
+function submitForm() {
+  if (formSelected.length === 0) {
+    showToast("请选择当前渠道");
+    return;
+  }
+  const labels = formSelected.map(v => {
+    if (v === "other") return formOtherText || "其他";
+    const opt = CHANNELS.find(o => o.value === v);
+    return opt ? opt.label : v;
+  });
+  showToast("提交成功！当前渠道：" + labels.join("、"));
+}
+
+// ========== CSS for channel page ==========
+const style = document.createElement("style");
+style.textContent = `
+  #option-list {
+    padding: 0;
+  }
+  .option-item {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.15s;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .option-item:last-child {
+    border-bottom: none;
+  }
+  .option-item:active { background: #f0f0f0; }
+  .option-item.selected { background: #f7f7f7; }
+  .option-text { font-size: 16px; color: #333; flex-shrink: 0; }
+  .option-item.selected .option-text { color: #4A9B8E; }
+
+  .option-item.other-with-input {
+    padding-right: 16px;
+    gap: 8px;
+  }
+  .panel-other-input {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    border: 1px solid #40a9ff;
+    border-radius: 4px;
+    padding: 0 12px;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+    color: #333;
+    box-shadow: 0 0 0 2px rgba(24,144,255,.1);
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .panel-other-input::placeholder { color: #bfbfbf; }
+  .panel-other-input:focus {
+    border-color: #4A9B8E;
+    box-shadow: 0 0 0 3px rgba(74,155,142,.15);
+  }
+
+  .option-check {
+    width: 22px; height: 22px;
+    border: 2px solid #d9d9d9;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 22px;
+    transition: all 0.15s;
+  }
+  .option-check.checked {
+    background: #4A9B8E;
+    border-color: #4A9B8E;
+  }
+  .option-check.checked::after {
+    content: '';
+    width: 5px; height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-1px, -1px);
+  }
+
+  .nav-done {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+`;
+document.head.appendChild(style);
+
+// 初始化
+renderFormChannels();
+</script>
+</body>
+</html>

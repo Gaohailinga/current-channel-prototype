@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PC 入网 - 当前渠道选择原型</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+    background: #f0f2f5;
+    color: #262626;
+    padding: 20px;
+  }
+  .container {
+    max-width: 1470px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .screenshot-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .screenshot-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* 交互层 - 覆盖在截图上的可交互元素 */
+  .interaction-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .interaction-layer .interactive {
+    pointer-events: auto;
+  }
+  /* 当前渠道输入框 - 位于原图输入框位置 */
+  .channel-select {
+    position: absolute;
+    /* 根据原图比例计算：原图 2940x1670，输入框 left=114, top=915, width=752, height=62 */
+    left: 3.88%;
+    top: 54.79%;
+    width: 25.58%;
+    height: 3.71%;
+  }
+  .select-trigger {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .select-trigger:hover {
+    border-color: #4096ff;
+  }
+  .select-trigger.open {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(22,119,255,0.12);
+  }
+  .select-value {
+    color: #262626;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .select-value.placeholder {
+    color: #bfbfbf;
+  }
+  .select-arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #bfbfbf;
+    transition: transform 0.2s;
+  }
+  .select-trigger.open .select-arrow {
+    transform: rotate(180deg);
+    border-top-color: #1677ff;
+  }
+  .select-panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    padding: 4px;
+    max-height: 240px;
+    overflow-y: auto;
+    display: none;
+    z-index: 100;
+  }
+  .select-panel.show {
+    display: block;
+  }
+  .select-option {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #262626;
+    transition: background 0.15s;
+  }
+  .select-option:hover {
+    background: #f5f5f5;
+  }
+  .select-option.selected {
+    background: #e6f4ff;
+    color: #1677ff;
+    font-weight: 500;
+  }
+  .select-option .check {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid #d9d9d9;
+    border-radius: 3px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .select-option.selected .check {
+    background: #1677ff;
+    border-color: #1677ff;
+  }
+  .select-option.selected .check::after {
+    content: '';
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 1.5px 1.5px 0;
+    transform: rotate(45deg) translate(-0.5px, -0.5px);
+  }
+  .select-option .label {
+    flex: 1;
+  }
+  .select-option .tick {
+    color: #1677ff;
+    font-size: 13px;
+    opacity: 0;
+  }
+  .select-option.selected .tick {
+    opacity: 1;
+  }
+  /* 其他输入框 */
+  .other-input-wrap {
+    position: absolute;
+    left: 3.88%;
+    top: 58.5%;
+    width: 25.58%;
+    display: none;
+  }
+  .other-input-wrap.show {
+    display: block;
+  }
+  .other-input {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 0 12px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .other-input:focus {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(22,119,255,0.12);
+  }
+  /* 提交结果 */
+  .result-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+    z-index: 1000;
+  }
+  .result-toast.show {
+    display: block;
+    animation: fadeInOut 2s ease-in-out;
+  }
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  /* 提示文字 */
+  .hint {
+    max-width: 1470px;
+    margin: 0 auto 16px;
+    font-size: 14px;
+    color: #8c8c8c;
+    line-height: 1.8;
+  }
+  .hint b {
+    color: #1677ff;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="hint">
+  <b>原型说明：</b>点击「当前渠道」输入框展开下拉选择面板；支持多选，已选项显示蓝色标签；选「其他」时显示输入框。
+</div>
+
+<div class="container">
+  <div class="screenshot-wrap">
+    <img src="../Desktop/机构入网当前渠道PC.png" alt="原始截图" />
+    <div class="interaction-layer">
+      <!-- 当前渠道下拉选择器 -->
+      <div class="channel-select interactive" id="channelSelect">
+        <div class="select-trigger" id="selectTrigger">
+          <span class="select-value placeholder" id="selectValue">请选择</span>
+          <i class="select-arrow"></i>
+        </div>
+        <div class="select-panel" id="selectPanel"></div>
+      </div>
+      <!-- 其他渠道输入框 -->
+      <div class="other-input-wrap interactive" id="otherInputWrap">
+        <input class="other-input" id="otherInput" type="text" placeholder="请输入当前渠道名称" maxlength="50" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="result-toast" id="resultToast"></div>
+
+<script>
+(function () {
+  var OPTIONS = [
+    "乐刷", "富友", "好哒", "随行付", "拉卡拉", "易宝",
+    "汇付", "国通", "汇来米", "收钱吧", "其他"
+  ];
+
+  var selectTrigger = document.getElementById("selectTrigger");
+  var selectPanel = document.getElementById("selectPanel");
+  var selectValue = document.getElementById("selectValue");
+  var otherInputWrap = document.getElementById("otherInputWrap");
+  var otherInput = document.getElementById("otherInput");
+  var resultToast = document.getElementById("resultToast");
+
+  var selected = [];
+  var otherText = "";
+
+  function renderOptions() {
+    selectPanel.innerHTML = "";
+    OPTIONS.forEach(function (opt) {
+      var div = document.createElement("div");
+      div.className = "select-option" + (selected.indexOf(opt) !== -1 ? " selected" : "");
+      div.innerHTML = "<span class='check'></span><span class='label'>" + opt + "</span><span class='tick'>✓</span>";
+      div.addEventListener("mousedown", function (e) {
+        e.preventDefault();
+        toggleOption(opt);
+      });
+      selectPanel.appendChild(div);
+    });
+  }
+
+  function toggleOption(opt) {
+    var idx = selected.indexOf(opt);
+    if (idx !== -1) {
+      selected.splice(idx, 1);
+    } else {
+      selected.push(opt);
+    }
+    if (opt === "其他" && idx === -1) {
+      otherInputWrap.classList.add("show");
+      otherInput.value = otherText;
+      setTimeout(function () { otherInput.focus(); }, 50);
+    } else if (opt === "其他" && idx !== -1) {
+      otherInputWrap.classList.remove("show");
+      otherText = "";
+      otherInput.value = "";
+    }
+    updateDisplay();
+    renderOptions();
+  }
+
+  function updateDisplay() {
+    if (selected.length === 0) {
+      selectValue.textContent = "请选择";
+      selectValue.classList.add("placeholder");
+    } else {
+      var labels = selected.map(function (opt) {
+        return opt === "其他" ? (otherText || "其他") : opt;
+      });
+      selectValue.textContent = labels.join("、");
+      selectValue.classList.remove("placeholder");
+    }
+  }
+
+  function openPanel() {
+    selectTrigger.classList.add("open");
+    selectPanel.classList.add("show");
+    renderOptions();
+  }
+
+  function closePanel() {
+    selectTrigger.classList.remove("open");
+    selectPanel.classList.remove("show");
+  }
+
+  selectTrigger.addEventListener("click", function (e) {
+    e.stopPropagation();
+    if (selectPanel.classList.contains("show")) {
+      closePanel();
+    } else {
+      openPanel();
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".channel-select")) {
+      closePanel();
+    }
+  });
+
+  otherInput.addEventListener("input", function () {
+    otherText = otherInput.value;
+    updateDisplay();
+  });
+
+  // 模拟提交
+  setTimeout(function () {
+    showToast("提交成功，当前渠道：" + selected.join("、"));
+  }, 3000);
+
+  function showToast(msg) {
+    resultToast.textContent = msg;
+    resultToast.classList.add("show");
+    setTimeout(function () {
+      resultToast.classList.remove("show");
+    }, 2000);
+  }
+
+  renderOptions();
+})();
+</script>
+</body>
+</html>
