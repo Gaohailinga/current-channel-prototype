@@ -6,24 +6,23 @@
   <title>当前渠道审核</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
-      background: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #e5e5e5;
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
       justify-content: center;
+      overflow-x: hidden;
     }
 
     .phone-frame {
       width: 100%;
       max-width: 440px;
       min-height: 100vh;
-      background: #f5f6f8;
+      background: #f5f5f5;
       position: relative;
       margin: 0 auto;
-      padding-bottom: 40px;
     }
 
     /* ========== 顶部导航 ========== */
@@ -37,263 +36,207 @@
       position: sticky;
       top: 0;
       z-index: 10;
-      border-bottom: 0.5px solid #eee;
+      border-bottom: 0.5px solid #e8e8e8;
     }
     .navbar .nav-back {
       position: absolute;
       left: 16px;
       bottom: 14px;
-      font-size: 24px;
+      font-size: 22px;
       color: #333;
       cursor: pointer;
-      width: 36px;
-      text-align: center;
+      width: 40px;
+      text-align: left;
     }
     .navbar .nav-title {
-      font-size: 16px;
-      font-weight: 500;
-      color: #1a1a1a;
+      font-size: 17px;
+      font-weight: 600;
+      color: #333;
     }
 
-    /* ========== 区块标题 ========== */
-    .block-title {
+    /* ========== 审核只读行 ========== */
+    .review-section {
+      background: #fff;
+      margin-bottom: 8px;
+    }
+    .review-row {
       display: flex;
       align-items: center;
-      padding: 18px 16px 10px;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid #f0f0f0;
+      min-height: 48px;
     }
-    .block-title .bar {
+    .review-row:last-child { border-bottom: none; }
+    .review-row .row-label {
+      flex: 1;
+      font-size: 15px;
+      color: #333;
+    }
+    .review-row .row-value {
+      font-size: 15px;
+      color: #333;
+      text-align: right;
+      max-width: 55%;
+      word-break: break-all;
+    }
+
+    /* ========== 渠道平铺展示区域 ========== */
+    .channel-expanded {
+      background: #fff;
+      margin-bottom: 8px;
+    }
+    .channel-expanded .channel-list {
+      padding: 4px 16px 12px;
+    }
+    .channel-expanded .channel-item {
+      padding: 8px 0;
+      border-bottom: 0.5px solid #f5f5f5;
+      font-size: 15px;
+      color: #333;
+    }
+    .channel-expanded .channel-item:last-child {
+      border-bottom: none;
+    }
+
+    /* ========== 底部结算信息 ========== */
+    .section-header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px 8px;
+    }
+    .section-header .header-bar {
       width: 3px;
       height: 14px;
       background: #4A9B8E;
       border-radius: 2px;
       margin-right: 8px;
-      flex-shrink: 0;
     }
-    .block-title .text {
+    .section-header .header-text {
       font-size: 15px;
       font-weight: 600;
-      color: #1a1a1a;
-    }
-
-    /* ========== 卡片 ========== */
-    .card {
-      background: #fff;
-      margin: 0 12px 12px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    /* ========== 信息行 ========== */
-    .info-row {
-      display: flex;
-      align-items: center;
-      padding: 14px 16px;
-      border-bottom: 0.5px solid #f2f2f2;
-    }
-    .info-row:last-child { border-bottom: none; }
-    .info-row .label {
-      flex: 1;
-      font-size: 14px;
-      color: #666;
-    }
-    .info-row .value {
-      font-size: 14px;
-      color: #1a1a1a;
-      text-align: right;
-      max-width: 50%;
-      word-break: break-all;
-    }
-
-    /* ========== 当前渠道 平铺区 ========== */
-    .channel-card {
-      background: #fff;
-      margin: 0 12px 12px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .channel-card .info-row {
-      padding-bottom: 12px;
-    }
-    .channel-card .info-row .value {
-      color: #1a1a1a;
-      font-weight: 500;
-    }
-
-    .channel-divider {
-      height: 1px;
-      background: #f2f2f2;
-      margin: 0 16px;
-    }
-
-    .channel-list {
-      padding: 4px 0 8px;
-    }
-    .channel-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 16px;
-    }
-    .channel-item .c-num {
-      width: 20px;
-      font-size: 13px;
-      color: #999;
-      flex-shrink: 0;
-    }
-    .channel-item .c-name {
-      font-size: 14px;
       color: #333;
     }
-
-    /* ========== 截图区域 ========== */
-    .screenshot-row {
-      padding: 14px 16px;
-    }
-    .screenshot-row .label {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-    }
-    .screenshot-placeholder {
-      display: flex;
-      gap: 8px;
-    }
-    .screenshot-thumb {
-      width: 90px;
-      height: 72px;
-      background: #f5f5f5;
-      border: 1px dashed #ddd;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #bbb;
-    }
-
-    /* ========== 底部占位 ========== */
-    .spacer { height: 20px; }
   </style>
 </head>
 <body>
 
 <div class="phone-frame">
-
-  <!-- 导航栏 -->
   <nav class="navbar">
     <div class="nav-back">‹</div>
     <div class="nav-title">曹县億柯凯瑞箱包店 dl10a1</div>
   </nav>
 
   <!-- 拓展商户行业 -->
-  <div class="card">
-    <div class="info-row">
-      <div class="label">拓展商户行业</div>
-      <div class="value">8888</div>
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">拓展商户行业</div>
+      <div class="row-value">8888</div>
     </div>
   </div>
 
   <!-- 贵司存量数据 -->
-  <div class="block-title"><div class="bar"></div><div class="text">贵司存量数据</div></div>
-  <div class="card">
-    <div class="info-row">
-      <div class="label">日笔数 (万笔)</div>
-      <div class="value">3</div>
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">日笔数 (万笔)</div>
+      <div class="row-value">3</div>
     </div>
-    <div class="info-row">
-      <div class="label">日交易金额 (万元)</div>
-      <div class="value">6</div>
+    <div class="review-row">
+      <div class="row-label">日交易金额 (万元)</div>
+      <div class="row-value">6</div>
     </div>
   </div>
 
   <!-- 签约我司后预估数据 -->
-  <div class="block-title"><div class="bar"></div><div class="text">签约我司后预估数据</div></div>
-  <div class="card">
-    <div class="info-row">
-      <div class="label">预计日交易笔数 (万笔)</div>
-      <div class="value">1111</div>
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">预计日交易笔数 (万笔)</div>
+      <div class="row-value">1111</div>
     </div>
-    <div class="info-row">
-      <div class="label">完成预估规模时间</div>
-      <div class="value">111</div>
+    <div class="review-row">
+      <div class="row-label">完成预估规模时间</div>
+      <div class="row-value">111</div>
     </div>
   </div>
 
   <!-- 展业模式 -->
-  <div class="card">
-    <div class="info-row">
-      <div class="label">展业模式</div>
-      <div class="value">直营</div>
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">展业模式</div>
+      <div class="row-value">直营</div>
     </div>
   </div>
 
-  <!-- 当前渠道（平铺展开） -->
-  <div class="channel-card">
-    <div class="info-row">
-      <div class="label">当前渠道</div>
-      <div class="value">乐刷、富友、收钱吧</div>
-    </div>
-    <div class="channel-divider"></div>
+  <!-- 当前渠道（平铺展示） -->
+  <div class="channel-expanded">
     <div class="channel-list">
-      <div class="channel-item"><span class="c-num">1.</span><span class="c-name">乐刷</span></div>
-      <div class="channel-item"><span class="c-num">2.</span><span class="c-name">富友</span></div>
-      <div class="channel-item"><span class="c-num">3.</span><span class="c-name">收钱吧</span></div>
+      <div class="channel-item">乐刷</div>
+      <div class="channel-item">富友</div>
+      <div class="channel-item">收钱吧</div>
     </div>
   </div>
 
   <!-- 业务场景模式 -->
-  <div class="card">
-    <div class="info-row">
-      <div class="label">业务场景模式</div>
-      <div class="value">线下</div>
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">业务场景模式</div>
+      <div class="row-value">线下</div>
     </div>
   </div>
 
-  <!-- 公司规模 + 信用等级 + 业务介绍 -->
-  <div class="card">
-    <div class="info-row">
-      <div class="label">公司规模 (人数)</div>
-      <div class="value">999</div>
-    </div>
-    <div class="info-row">
-      <div class="label">财务纳税信用等级</div>
-      <div class="value">A</div>
-    </div>
-    <div class="info-row">
-      <div class="label">产品及业务介绍</div>
-      <div class="value">多大的</div>
+  <!-- 公司规模 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">公司规模 (人数)</div>
+      <div class="row-value">999</div>
     </div>
   </div>
 
-  <!-- 截图 -->
-  <div class="card">
-    <div class="screenshot-row">
-      <div class="label">财务纳税信用等级清算协会备案截图</div>
-      <div class="screenshot-placeholder">
-        <div class="screenshot-thumb">截图1</div>
-        <div class="screenshot-thumb">截图2</div>
-      </div>
+  <!-- 财务纳税信用等级 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">财务纳税信用等级</div>
+      <div class="row-value">A</div>
     </div>
   </div>
 
-  <div class="spacer"></div>
+  <!-- 产品及业务介绍 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">产品及业务介绍</div>
+      <div class="row-value">多大的</div>
+    </div>
+  </div>
+
+  <!-- 财务纳税信用等级清算协会备案截图 -->
+  <div class="review-section">
+    <div class="review-row">
+      <div class="row-label">财务纳税信用等级清算协会备案截图</div>
+      <div class="row-value"></div>
+    </div>
+  </div>
+
+  <!-- 底部占位 -->
+  <div style="height: 16px;"></div>
 
   <!-- 结算信息 -->
-  <div class="block-title"><div class="bar"></div><div class="text">结算信息</div></div>
-  <div class="card" style="margin-bottom: 20px;">
-    <div class="info-row">
-      <div class="label">结算方式</div>
-      <div class="value">T+1</div>
+  <div class="review-section" style="margin-bottom: 0; padding-bottom: 60px;">
+    <div class="section-header">
+      <div class="header-bar"></div>
+      <div class="header-text">结算信息</div>
     </div>
-    <div class="info-row">
-      <div class="label">结算银行卡号</div>
-      <div class="value">6222 **** **** 1234</div>
+    <div class="review-row">
+      <div class="row-label">结算方式</div>
+      <div class="row-value">T+1</div>
     </div>
-    <div class="info-row">
-      <div class="label">开户行</div>
-      <div class="value">中国工商银行</div>
+    <div class="review-row">
+      <div class="row-label">结算银行卡号</div>
+      <div class="row-value">6222 **** **** 1234</div>
+    </div>
+    <div class="review-row">
+      <div class="row-label">开户行</div>
+      <div class="row-value">中国工商银行</div>
     </div>
   </div>
-
 </div>
 
 </body>
